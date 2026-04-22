@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Extend\Complaints;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\QueryDetailPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\QueryDetailPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -35,7 +37,7 @@ class QueryDetailPluginTest extends TestCase
     public function testNormal()
     {
         $payload = [
-            "complaint_id" => "yansongda",
+            'complaint_id' => 'yansongda',
         ];
 
         $rocket = new Rocket();
@@ -53,7 +55,7 @@ class QueryDetailPluginTest extends TestCase
     public function testNormalWithEncryptedContents()
     {
         $payload = [
-            "complaint_id" => "yansongda",
+            'complaint_id' => 'yansongda',
         ];
 
         $rocket = new Rocket();
@@ -78,7 +80,7 @@ class QueryDetailPluginTest extends TestCase
     public function testNormalWithEncryptedContentsWrong()
     {
         $payload = [
-            "complaint_id" => "yansongda",
+            'complaint_id' => 'yansongda',
         ];
 
         $rocket = new Rocket();

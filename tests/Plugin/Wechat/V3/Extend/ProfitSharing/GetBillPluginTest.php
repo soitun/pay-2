@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Plugin\Wechat\V3\Extend\ProfitSharing;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,8 +36,8 @@ class GetBillPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "download_url" => "111",
+        $rocket->setPayload(new Collection([
+            'download_url' => '111',
             '_t' => 'a',
         ]));
 

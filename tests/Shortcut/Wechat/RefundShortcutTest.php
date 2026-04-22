@@ -131,7 +131,6 @@ class RefundShortcutTest extends TestCase
         ], $this->plugin->getPlugins(['_action' => 'native']));
     }
 
-
     public function testFoo()
     {
         self::expectException(InvalidParamsException::class);

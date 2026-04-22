@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
@@ -41,7 +42,7 @@ class PayPlugin implements PluginInterface
             throw new InvalidParamsException(Exception::PARAMS_NECESSARY_PARAMS_MISSING, '参数异常: Native 下单，参数为空');
         }
 
-        if (Pay::MODE_SERVICE === ($config['mode'] ?? Pay::MODE_NORMAL)) {
+        if (Pay::MODE_SERVICE === $config->getMode()) {
             $data = $this->service($payload, $params, $config);
         }
 
@@ -50,7 +51,7 @@ class PayPlugin implements PluginInterface
                 '_method' => 'POST',
                 '_url' => 'v3/pay/transactions/native',
                 '_service_url' => 'v3/pay/partner/transactions/native',
-                'notify_url' => $payload->get('notify_url', $config['notify_url'] ?? ''),
+                'notify_url' => $payload->get('notify_url', $config->getNotifyUrl()),
             ],
             $data ?? $this->normal($params, $config)
         ));
@@ -60,22 +61,20 @@ class PayPlugin implements PluginInterface
         return $next($rocket);
     }
 
-    protected function normal(array $params, array $config): array
+    protected function normal(array $params, WechatConfig $config): array
     {
         return [
-            'appid' => $config[self::getWechatTypeKey($params)] ?? '',
-            'mchid' => $config['mch_id'] ?? '',
+            'appid' => $config->getAppIdByType($params['_type'] ?? 'mp') ?? '',
+            'mchid' => $config->getMchId(),
         ];
     }
 
-    protected function service(Collection $payload, array $params, array $config): array
+    protected function service(Collection $payload, array $params, WechatConfig $config): array
     {
-        $configKey = self::getWechatTypeKey($params);
-
         return [
-            'sp_appid' => $config[$configKey] ?? '',
-            'sp_mchid' => $config['mch_id'] ?? '',
-            'sub_mchid' => $payload->get('sub_mchid', $config['sub_mch_id'] ?? ''),
+            'sp_appid' => $config->getAppIdByType($params['_type'] ?? 'mp') ?? '',
+            'sp_mchid' => $config->getMchId(),
+            'sub_mchid' => $payload->get('sub_mchid', $config->getSubMchId() ?? ''),
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Coupon\Stock;
 
 use Yansongda\Artful\Rocket;
@@ -21,8 +23,8 @@ class CreatePluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'belong_merchant' => '1111',
         ]));
 
@@ -36,12 +38,12 @@ class CreatePluginTest extends TestCase
             'belong_merchant' => '1111',
         ], $result->getPayload()->all());
     }
-    
+
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

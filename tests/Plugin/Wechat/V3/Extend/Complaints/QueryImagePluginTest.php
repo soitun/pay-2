@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Extend\Complaints;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\QueryImagePlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\QueryImagePlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -34,7 +36,7 @@ class QueryImagePluginTest extends TestCase
     public function testNormal()
     {
         $payload = [
-            "media_id" => "yansongda",
+            'media_id' => 'yansongda',
         ];
 
         $rocket = new Rocket();

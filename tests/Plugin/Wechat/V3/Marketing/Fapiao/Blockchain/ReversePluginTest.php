@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Fapiao\Blockchain;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,7 +36,7 @@ class ReversePluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
+        $rocket->setPayload(new Collection([
             'fapiao_apply_id' => '111',
             'reason' => '222',
             '_t' => 'a',

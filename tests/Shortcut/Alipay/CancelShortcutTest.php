@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Shortcut\Alipay;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -118,7 +120,7 @@ class CancelShortcutTest extends TestCase
         ], $result);
     }
 
-public function testScan()
+    public function testScan()
     {
         $result = $this->shortcut->getPlugins(['_action' => 'scan']);
 

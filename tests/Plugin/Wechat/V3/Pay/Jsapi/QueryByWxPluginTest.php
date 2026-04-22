@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Pay\Jsapi;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Pay\Jsapi\QueryByWxPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Pay\Jsapi\QueryByWxPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -34,8 +36,8 @@ class QueryByWxPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "transaction_id" => "111",
+        $rocket->setPayload(new Collection([
+            'transaction_id' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -47,8 +49,8 @@ class QueryByWxPluginTest extends TestCase
     public function testServiceParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "transaction_id" => "111",
+        $rocket->setPayload(new Collection([
+            'transaction_id' => '111',
             'sub_mchid' => '333',
         ]));
 
@@ -61,8 +63,8 @@ class QueryByWxPluginTest extends TestCase
     public function testService()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "transaction_id" => "111",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'transaction_id' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

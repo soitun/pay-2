@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
@@ -32,10 +33,12 @@ class QueryMerchantConfigsPlugin implements PluginInterface
         Logger::debug('[Wechat][Extend][ProfitSharing][QueryMerchantConfigsPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $payload = $rocket->getPayload();
-        $config = self::getProviderConfig('wechat', $rocket->getParams());
-        $subMchId = $payload?->get('sub_mch_id') ?? $config['sub_mch_id'] ?? 'null';
 
-        if (Pay::MODE_NORMAL === ($config['mode'] ?? Pay::MODE_NORMAL)) {
+        /** @var WechatConfig $config */
+        $config = self::getProviderConfig('wechat', $rocket->getParams());
+        $subMchId = $payload?->get('sub_mch_id') ?? ($config->getSubMchId() ?? 'null');
+
+        if (Pay::MODE_NORMAL === $config->getMode()) {
             throw new InvalidParamsException(Exception::PARAMS_PLUGIN_ONLY_SUPPORT_SERVICE_MODE, '参数异常: 查询最大分账比例，只支持服务商模式，当前配置为普通商户模式');
         }
 

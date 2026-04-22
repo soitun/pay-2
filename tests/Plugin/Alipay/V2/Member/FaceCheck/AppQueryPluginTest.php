@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Alipay\V2\Member\FaceCheck;
 
 use Yansongda\Artful\Direction\ResponseDirection;
-use Yansongda\Pay\Plugin\Alipay\V2\Member\FaceCheck\AppQueryPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Alipay\V2\Member\FaceCheck\AppQueryPlugin;
 use Yansongda\Pay\Tests\TestCase;
 
 class AppQueryPluginTest extends TestCase

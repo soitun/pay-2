@@ -7,13 +7,12 @@ namespace Yansongda\Pay;
 use Closure;
 use Psr\Container\ContainerInterface;
 use Yansongda\Artful\Artful;
+use Yansongda\Artful\Contract\ConfigInterface;
 use Yansongda\Artful\Event\ArtfulEnd;
 use Yansongda\Artful\Event\ArtfulStart;
 use Yansongda\Artful\Event\HttpEnd;
 use Yansongda\Artful\Event\HttpStart;
 use Yansongda\Artful\Exception\ContainerException;
-use Yansongda\Artful\Exception\ServiceNotFoundException;
-use Yansongda\Pay\Config\ProviderConfigInterface;
 use Yansongda\Pay\Provider\Alipay;
 use Yansongda\Pay\Provider\Douyin;
 use Yansongda\Pay\Provider\Jsb;
@@ -76,10 +75,6 @@ class Pay
         StripeServiceProvider::class,
     ];
 
-    /**
-     * @throws ContainerException
-     * @throws ServiceNotFoundException
-     */
     public static function __callStatic(string $service, array $config = [])
     {
         if (!empty($config)) {
@@ -94,15 +89,39 @@ class Pay
      */
     public static function config(array|Config $config = [], Closure|ContainerInterface|null $container = null): bool
     {
-        if (is_array($config) && Artful::hasContainer() && !($config['_force'] ?? false)) {
-            return false;
+        // Early return check for array input (avoid validation for partial configs)
+        // Only return false if already configured (ConfigInterface bound) and not forced
+        if (is_array($config) && !($config['_force'] ?? false)) {
+            try {
+                if (Artful::has(ConfigInterface::class)) {
+                    return false;
+                }
+            } catch (ContainerException) {
+                // Container not found, proceed with config
+            }
         }
 
-        $configObject = is_array($config) ? new Config(self::mergeConfig($config)) : $config;
-        $result = Artful::config(self::exportConfig($configObject->all()), $container);
+        $configObject = is_array($config) ? new Config($config) : $config;
+        $runtimeConfig = $configObject->all();
+        $force = is_array($config) ? (bool) ($config['_force'] ?? false) : (bool) ($runtimeConfig['_force'] ?? false);
+
+        // For Config instance input, check force from runtime config
+        if (!is_array($config) && !$force) {
+            try {
+                if (Artful::has(ConfigInterface::class)) {
+                    return false;
+                }
+            } catch (ContainerException) {
+                // Container not found, proceed with config
+            }
+        }
+
+        // Force Artful::config() to execute by setting _force in runtime config
+        $runtimeConfig['_force'] = true;
+
+        $result = Artful::config($runtimeConfig, $container);
 
         if ($result) {
-            Artful::set(Config::class, $configObject);
             Event::addListener(ArtfulStart::class, [PayListener::class, 'artfulStart']);
             Event::addListener(ArtfulEnd::class, [PayListener::class, 'artfulEnd']);
             Event::addListener(HttpStart::class, [PayListener::class, 'httpStart']);
@@ -124,10 +143,6 @@ class Pay
         Artful::set($name, $value);
     }
 
-    /**
-     * @throws ContainerException
-     * @throws ServiceNotFoundException
-     */
     public static function get(string $service): mixed
     {
         return Artful::get($service);
@@ -141,54 +156,5 @@ class Pay
     public static function clear(): void
     {
         Artful::clear();
-    }
-
-    private static function mergeConfig(array $config): array
-    {
-        if (!($config['_force'] ?? false) || !Artful::hasContainer()) {
-            return $config;
-        }
-
-        try {
-            $current = self::get(Config::class);
-        } catch (ContainerException|ServiceNotFoundException) {
-            return $config;
-        }
-
-        return array_replace_recursive(self::exportConfig($current->all()), $config);
-    }
-
-    private static function exportConfig(mixed $config): mixed
-    {
-        if ($config instanceof ProviderConfigInterface) {
-            return self::filterNullConfigValues($config->toArray());
-        }
-
-        if (!is_array($config)) {
-            return $config;
-        }
-
-        foreach ($config as $key => $value) {
-            $config[$key] = self::exportConfig($value);
-        }
-
-        return $config;
-    }
-
-    private static function filterNullConfigValues(array $config): array
-    {
-        foreach ($config as $key => $value) {
-            if (null === $value) {
-                unset($config[$key]);
-
-                continue;
-            }
-
-            if (is_array($value)) {
-                $config[$key] = self::filterNullConfigValues($value);
-            }
-        }
-
-        return $config;
     }
 }

@@ -22,27 +22,21 @@ trait ProviderConfigTrait
      * @throws ContainerException
      * @throws ServiceNotFoundException
      */
-    public static function getProviderConfig(string $provider, array $params = []): array
+    public static function getProviderConfig(string $provider, array $params = []): ProviderConfigInterface
     {
         /** @var ConfigInterface $config */
         $config = Pay::get(ConfigInterface::class);
 
-        $providerConfig = $config->get($provider, [])[static::getTenant($params)] ?? [];
-
-        if ($providerConfig instanceof ProviderConfigInterface) {
-            return $providerConfig->toArray();
-        }
-
-        return $providerConfig;
+        return $config->get($provider.'.'.static::getTenant($params));
     }
 
-    public static function getRadarUrl(array $config, ?Collection $payload): ?string
+    public static function getRadarUrl(ProviderConfigInterface $config, ?Collection $payload): ?string
     {
         if (null === $payload) {
             return null;
         }
 
-        return match ($config['mode'] ?? Pay::MODE_NORMAL) {
+        return match ($config->getMode()) {
             Pay::MODE_SERVICE => $payload->get('_service_url', $payload->get('_url')),
             Pay::MODE_SANDBOX => $payload->get('_sandbox_url', $payload->get('_url')),
             default => $payload->get('_url'),

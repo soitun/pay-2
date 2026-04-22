@@ -12,6 +12,7 @@ use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Packer\XmlPacker;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
 use Yansongda\Supports\Collection;
@@ -34,9 +35,11 @@ class SendPlugin implements PluginInterface
         Logger::debug('[Wechat][V2][Pay][Redpack][SendPlugin] 插件开始装载', ['rocket' => $rocket]);
         $payload = $rocket->getPayload();
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
 
-        if (Pay::MODE_SERVICE === ($config['mode'] ?? Pay::MODE_NORMAL)) {
+        if (Pay::MODE_SERVICE === $config->getMode()) {
             $data = $this->service($payload, $config, $params);
         }
 
@@ -47,8 +50,8 @@ class SendPlugin implements PluginInterface
                     '_content_type' => 'application/xml',
                     'nonce_str' => Str::random(32),
                     '_http' => [
-                        'ssl_key' => $config['mch_secret_cert'],
-                        'cert' => $config['mch_public_cert_path'],
+                        'ssl_key' => $config->getMchSecretCert(),
+                        'cert' => $config->getMchPublicCertPath(),
                     ],
                 ],
                 $data ?? $this->normal($config, $params)
@@ -59,23 +62,21 @@ class SendPlugin implements PluginInterface
         return $next($rocket);
     }
 
-    protected function normal(array $config, array $params): array
+    protected function normal(WechatConfig $config, array $params): array
     {
         return [
-            'wxappid' => $config[self::getWechatTypeKey($params)] ?? '',
-            'mch_id' => $config['mch_id'] ?? '',
+            'wxappid' => $config->getAppIdByType($params['_type'] ?? 'mp') ?? '',
+            'mch_id' => $config->getMchId(),
         ];
     }
 
-    protected function service(Collection $payload, array $config, array $params): array
+    protected function service(Collection $payload, WechatConfig $config, array $params): array
     {
-        $wechatTypeKey = self::getWechatTypeKey($params);
-
         return [
-            'wxappid' => $config[$wechatTypeKey] ?? '',
-            'mch_id' => $config['mch_id'] ?? '',
-            'sub_mch_id' => $payload->get('sub_mch_id', $config['sub_mch_id'] ?? ''),
-            'msgappid' => $config['sub_'.$wechatTypeKey],
+            'wxappid' => $config->getAppIdByType($params['_type'] ?? 'mp') ?? '',
+            'mch_id' => $config->getMchId(),
+            'sub_mch_id' => $payload->get('sub_mch_id', $config->getSubMchId() ?? ''),
+            'msgappid' => $config->getSubAppIdByType($params['_type'] ?? 'mp') ?? '',
         ];
     }
 }

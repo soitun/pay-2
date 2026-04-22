@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Fapiao;
 
 use Yansongda\Artful\Rocket;
@@ -21,8 +23,8 @@ class CreateCardTemplatePluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'card_appid' => '1111',
         ]));
 
@@ -39,8 +41,8 @@ class CreateCardTemplatePluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

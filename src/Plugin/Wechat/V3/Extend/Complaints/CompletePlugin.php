@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Traits\WechatTrait;
 
@@ -31,6 +32,7 @@ class CompletePlugin implements PluginInterface
     {
         Logger::debug('[Wechat][Extend][Complaints][CompletePlugin] 插件开始装载', ['rocket' => $rocket]);
 
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $rocket->getParams());
         $payload = $rocket->getPayload();
         $complaintId = $payload?->get('complaint_id') ?? null;
@@ -43,7 +45,7 @@ class CompletePlugin implements PluginInterface
             '_method' => 'POST',
             '_url' => 'v3/merchant-service/complaints-v2/'.$complaintId.'/complete',
             '_service_url' => 'v3/merchant-service/complaints-v2/'.$complaintId.'/complete',
-            'complainted_mchid' => $payload->get('complainted_mchid') ?? $config['mch_id'],
+            'complainted_mchid' => $payload->get('complainted_mchid') ?? $config->getMchId(),
         ]);
 
         Logger::info('[Wechat][Extend][Complaints][CompletePlugin] 插件装载完毕', ['rocket' => $rocket]);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Shortcut\Jsb;
 
 use Yansongda\Artful\Plugin\ParserPlugin;
@@ -14,25 +16,25 @@ use Yansongda\Pay\Tests\TestCase;
 
 class RefundShortcutTest extends TestCase
 {
-	protected RefundShortcut $plugin;
+    protected RefundShortcut $plugin;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		$this->plugin = new RefundShortcut();
-	}
+        $this->plugin = new RefundShortcut();
+    }
 
-	public function testDefault()
-	{
-		self::assertEquals([
-			StartPlugin::class,
-			RefundPlugin::class,
-			AddPayloadSignPlugin::class,
-			AddRadarPlugin::class,
-			VerifySignaturePlugin::class,
-			ResponsePlugin::class,
-			ParserPlugin::class,
-		], $this->plugin->getPlugins([]));
-	}
+    public function testDefault()
+    {
+        self::assertEquals([
+            StartPlugin::class,
+            RefundPlugin::class,
+            AddPayloadSignPlugin::class,
+            AddRadarPlugin::class,
+            VerifySignaturePlugin::class,
+            ResponsePlugin::class,
+            ParserPlugin::class,
+        ], $this->plugin->getPlugins([]));
+    }
 }

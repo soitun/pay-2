@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Transfer;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -46,8 +48,8 @@ class CancelPluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "out_bill_no" => "111",
+        $rocket->setPayload(new Collection([
+            'out_bill_no' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

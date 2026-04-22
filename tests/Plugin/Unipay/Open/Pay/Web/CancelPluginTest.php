@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Unipay\Open\Pay\Web;
 
 use Yansongda\Artful\Packer\QueryPacker;
-use Yansongda\Pay\Plugin\Unipay\Open\Pay\Web\CancelPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Unipay\Open\Pay\Web\CancelPlugin;
 use Yansongda\Pay\Tests\TestCase;
 
 class CancelPluginTest extends TestCase

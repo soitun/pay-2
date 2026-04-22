@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Pay\Combine;
 
 use Yansongda\Artful\Direction\OriginResponseDirection;
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Pay\Combine\ClosePlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Pay\Combine\ClosePlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -35,8 +37,8 @@ class ClosePluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "combine_out_trade_no" => "111",
+        $rocket->setPayload(new Collection([
+            'combine_out_trade_no' => '111',
             'combine_appid' => '333',
             'name' => 'yansongda',
         ]));
@@ -56,8 +58,8 @@ class ClosePluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "combine_out_trade_no" => "111",
+        $rocket->setPayload(new Collection([
+            'combine_out_trade_no' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

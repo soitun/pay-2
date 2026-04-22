@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Coupon\Coupons;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,8 +36,8 @@ class QueryUserPluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "openid" => "111",
+        $rocket->setPayload(new Collection([
+            'openid' => '111',
             'appid' => '222',
             '_t' => 'a',
         ]));
@@ -52,8 +54,8 @@ class QueryUserPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "openid" => "111",
+        $rocket->setPayload(new Collection([
+            'openid' => '111',
             '_t' => 'a',
         ]));
 

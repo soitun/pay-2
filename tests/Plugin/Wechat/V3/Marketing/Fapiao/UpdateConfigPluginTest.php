@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Fapiao;
 
 use Yansongda\Artful\Rocket;
@@ -21,8 +23,8 @@ class UpdateConfigPluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'card_appid' => '1111',
         ]));
 
@@ -31,7 +33,7 @@ class UpdateConfigPluginTest extends TestCase
         self::assertEquals([
             '_method' => 'PATCH',
             '_url' => 'v3/new-tax-control-fapiao/merchant/development-config',
-            "test" => "yansongda",
+            'test' => 'yansongda',
             'card_appid' => '1111',
         ], $result->getPayload()->all());
     }

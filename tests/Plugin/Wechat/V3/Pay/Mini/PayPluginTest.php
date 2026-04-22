@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Pay\Mini;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Pay\Mini\PayPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Pay\Mini\PayPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -34,8 +36,8 @@ class PayPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "name" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'name' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -44,7 +46,7 @@ class PayPluginTest extends TestCase
             '_method' => 'POST',
             '_url' => 'v3/pay/transactions/jsapi',
             '_service_url' => 'v3/pay/partner/transactions/jsapi',
-            "appid" => "wx55955316af4ef14",
+            'appid' => 'wx55955316af4ef14',
             'mchid' => '1600314069',
             'notify_url' => 'https://pay.yansongda.cn',
             'name' => 'yansongda',
@@ -54,7 +56,7 @@ class PayPluginTest extends TestCase
     public function testServiceParams()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
             'sub_mchid' => '333',
             'notify_url' => '444',
             'name' => 'yansongda',
@@ -66,7 +68,7 @@ class PayPluginTest extends TestCase
             '_method' => 'POST',
             '_url' => 'v3/pay/transactions/jsapi',
             '_service_url' => 'v3/pay/partner/transactions/jsapi',
-            "sp_appid" => "wx55955316af4ef14",
+            'sp_appid' => 'wx55955316af4ef14',
             'sp_mchid' => '1600314069',
             'sub_mchid' => '333',
             'notify_url' => '444',
@@ -77,7 +79,7 @@ class PayPluginTest extends TestCase
     public function testService()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
             'name' => 'yansongda',
         ]));
 
@@ -87,10 +89,10 @@ class PayPluginTest extends TestCase
             '_method' => 'POST',
             '_url' => 'v3/pay/transactions/jsapi',
             '_service_url' => 'v3/pay/partner/transactions/jsapi',
-            "sp_appid" => "wx55955316af4ef14",
+            'sp_appid' => 'wx55955316af4ef14',
             'sp_mchid' => '1600314069',
             'sub_mchid' => '1600314070',
-            'notify_url' => '',
+            'notify_url' => 'https://pay.yansongda.cn',
             'name' => 'yansongda',
         ], $result->getPayload()->all());
     }

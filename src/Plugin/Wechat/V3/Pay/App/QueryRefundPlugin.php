@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Traits\WechatTrait;
 
@@ -32,6 +33,8 @@ class QueryRefundPlugin implements PluginInterface
         Logger::debug('[Wechat][V3][Pay][App][QueryRefundPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $payload = $rocket->getPayload();
         $outRefundNo = $payload?->get('out_refund_no') ?? null;
@@ -40,7 +43,7 @@ class QueryRefundPlugin implements PluginInterface
             throw new InvalidParamsException(Exception::PARAMS_NECESSARY_PARAMS_MISSING, '参数异常: App 查询退款订单，参数缺少 `out_refund_no`');
         }
 
-        $subMchId = $payload->get('sub_mchid', $config['sub_mch_id'] ?? '');
+        $subMchId = $payload->get('sub_mchid', $config->getSubMchId() ?? '');
 
         $rocket->setPayload([
             '_method' => 'GET',

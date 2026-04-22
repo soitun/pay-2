@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Traits\WechatTrait;
 use Yansongda\Supports\Collection;
@@ -52,18 +53,18 @@ class QueryByWxPlugin implements PluginInterface
         return $next($rocket);
     }
 
-    protected function normal(array $config): string
+    protected function normal(WechatConfig $config): string
     {
         return http_build_query([
-            'mchid' => $config['mch_id'] ?? 'null',
+            'mchid' => $config->getMchId(),
         ]);
     }
 
-    protected function service(Collection $payload, array $config): string
+    protected function service(Collection $payload, WechatConfig $config): string
     {
         return http_build_query([
-            'sp_mchid' => $config['mch_id'] ?? 'null',
-            'sub_mchid' => $payload->get('sub_mchid', $config['sub_mch_id'] ?? 'null'),
+            'sp_mchid' => $config->getMchId(),
+            'sub_mchid' => $payload->get('sub_mchid', $config->getSubMchId() ?? 'null'),
         ]);
     }
 }

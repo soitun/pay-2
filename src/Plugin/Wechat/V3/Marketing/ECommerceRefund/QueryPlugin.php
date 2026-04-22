@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
@@ -33,10 +34,12 @@ class QueryPlugin implements PluginInterface
 
         $params = $rocket->getParams();
         $payload = $rocket->getPayload();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $outRefundNo = $payload?->get('out_refund_no') ?? null;
 
-        if (Pay::MODE_NORMAL === ($config['mode'] ?? Pay::MODE_NORMAL)) {
+        if (Pay::MODE_NORMAL === $config->getMode()) {
             throw new InvalidParamsException(Exception::PARAMS_PLUGIN_ONLY_SUPPORT_SERVICE_MODE, '参数异常: 平台收付通（退款）-查询单笔退款（按商户退款单号），只支持服务商模式，当前配置为普通商户模式');
         }
 
@@ -46,7 +49,7 @@ class QueryPlugin implements PluginInterface
 
         $rocket->setPayload([
             '_method' => 'GET',
-            '_service_url' => 'v3/ecommerce/refunds/out-refund-no/'.$outRefundNo.'?sub_mchid='.$payload->get('sub_mchid', $config['sub_mch_id'] ?? 'null'),
+            '_service_url' => 'v3/ecommerce/refunds/out-refund-no/'.$outRefundNo.'?sub_mchid='.$payload->get('sub_mchid', $config->getSubMchId() ?? 'null'),
         ]);
 
         Logger::info('[Wechat][V3][Marketing][ECommerceRefund][QueryPlugin] 插件装载完毕', ['rocket' => $rocket]);

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Traits;
 
-use Yansongda\Pay\Pay;
+use Yansongda\Artful\Contract\ConfigInterface;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Pay;
 use Yansongda\Pay\Tests\Stubs\Traits\SupportServiceProviderPluginStub;
 use Yansongda\Pay\Tests\TestCase;
 
@@ -11,15 +14,9 @@ class SupportServiceProviderTraitTest extends TestCase
 {
     public function testNormal()
     {
-        Pay::config([
-           '_force' => true,
-           'alipay' => [
-               'default' => [
-                   'mode' => Pay::MODE_SERVICE,
-                   'service_provider_id' => 'yansongda'
-               ]
-           ]
-        ]);
+        $config = Pay::get(ConfigInterface::class)->get('alipay.default');
+        $config->setMode(Pay::MODE_SERVICE);
+        $config->setServiceProviderId('yansongda');
 
         $rocket = new Rocket();
         (new SupportServiceProviderPluginStub())->assembly($rocket);

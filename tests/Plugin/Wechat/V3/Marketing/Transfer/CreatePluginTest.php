@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Transfer;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Mockery;
 use Yansongda\Artful\Contract\HttpClientInterface;
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Pay;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Pay;
 use Yansongda\Pay\Plugin\Wechat\V3\Marketing\Transfer\CreatePlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
@@ -51,8 +53,8 @@ class CreatePluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'appid' => '1111',
         ]));
 
@@ -70,8 +72,8 @@ class CreatePluginTest extends TestCase
     public function testNormalWithoutName()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -89,7 +91,7 @@ class CreatePluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setPayload(new Collection([
-            "test" => "111",
+            'test' => '111',
             'user_name' => 'yansongda',
             'foo' => 'bar',
         ]));
@@ -114,7 +116,7 @@ class CreatePluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setParams(['_config' => 'empty_wechat_public_cert'])->setPayload(new Collection([
-            "test" => "111",
+            'test' => '111',
             'user_name' => 'yansongda',
             'foo' => 'bar',
         ]));
@@ -134,8 +136,8 @@ class CreatePluginTest extends TestCase
                         ],
                         'expire_time' => '2026-07-15T17:51:10+08:00',
                         'serial_no' => 'test-45F59D4DABF31918AFCEC556D5D2C6E376675D57',
-                    ]
-                ]
+                    ],
+                ],
             ])
         );
 
@@ -162,8 +164,8 @@ class CreatePluginTest extends TestCase
     public function testNormalParamsWithNotifyUrl()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'appid' => '1111',
             'notify_url' => 'https://yansongda.cn',
         ]));

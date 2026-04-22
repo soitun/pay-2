@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
@@ -34,6 +35,8 @@ class RefundPlugin implements PluginInterface
         Logger::debug('[Wechat][V3][Pay][H5][RefundPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $payload = $rocket->getPayload();
 
@@ -41,7 +44,7 @@ class RefundPlugin implements PluginInterface
             throw new InvalidParamsException(Exception::PARAMS_NECESSARY_PARAMS_MISSING, '参数异常: H5 退款申请，参数为空');
         }
 
-        if (Pay::MODE_SERVICE === $config['mode']) {
+        if (Pay::MODE_SERVICE === $config->getMode()) {
             $data = $this->service($payload, $config);
         }
 
@@ -50,7 +53,7 @@ class RefundPlugin implements PluginInterface
                 '_method' => 'POST',
                 '_url' => 'v3/refund/domestic/refunds',
                 '_service_url' => 'v3/refund/domestic/refunds',
-                'notify_url' => $payload->get('notify_url', $config['notify_url'] ?? null),
+                'notify_url' => $payload->get('notify_url', $config->getNotifyUrl()),
             ],
             $data ?? $this->normal()
         ));
@@ -65,10 +68,10 @@ class RefundPlugin implements PluginInterface
         return [];
     }
 
-    protected function service(Collection $payload, array $config): array
+    protected function service(Collection $payload, WechatConfig $config): array
     {
         return [
-            'sub_mchid' => $payload->get('sub_mchid', $config['sub_mch_id'] ?? ''),
+            'sub_mchid' => $payload->get('sub_mchid', $config->getSubMchId() ?? ''),
         ];
     }
 }

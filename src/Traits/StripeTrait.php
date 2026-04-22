@@ -9,9 +9,9 @@ use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
+use Yansongda\Pay\Config\StripeConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Exception\InvalidSignException;
-use Yansongda\Pay\Pay;
 use Yansongda\Pay\Provider\Stripe;
 use Yansongda\Supports\Collection;
 
@@ -22,7 +22,7 @@ trait StripeTrait
     /**
      * @throws InvalidParamsException
      */
-    public static function getStripeUrl(array $config, ?Collection $payload): string
+    public static function getStripeUrl(StripeConfig $config, ?Collection $payload): string
     {
         $url = self::getRadarUrl($config, $payload);
 
@@ -34,7 +34,7 @@ trait StripeTrait
             return $url;
         }
 
-        return Stripe::URL[$config['mode'] ?? Pay::MODE_NORMAL].$url;
+        return Stripe::URL[$config->getMode()].$url;
     }
 
     /**
@@ -45,8 +45,9 @@ trait StripeTrait
      */
     public static function verifyStripeWebhookSign(ServerRequestInterface $request, array $params): void
     {
+        /** @var StripeConfig $config */
         $config = static::getProviderConfig('stripe', $params);
-        $webhookSecret = $config['webhook_secret'] ?? null;
+        $webhookSecret = $config->getWebhookSecret();
 
         if (empty($webhookSecret)) {
             throw new InvalidConfigException(Exception::CONFIG_STRIPE_INVALID, '配置异常: 缺少 Stripe 配置 -- [webhook_secret]');

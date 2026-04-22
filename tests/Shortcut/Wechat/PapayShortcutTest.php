@@ -110,7 +110,7 @@ class PapayShortcutTest extends TestCase
         self::assertEquals([
             StartPlugin::class,
             MiniOnlyContractPlugin::class,
-            AddPayloadSignaturePlugin::class
+            AddPayloadSignaturePlugin::class,
         ], $this->plugin->getPlugins(['_action' => 'contract', '_type' => 'mini']));
 
         self::expectException(InvalidParamsException::class);

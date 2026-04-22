@@ -33,6 +33,4 @@ class ConcreteServiceProvider extends AbstractServiceProvider
     }
 }
 
-class ConcreteProvider
-{
-}
+class ConcreteProvider {}

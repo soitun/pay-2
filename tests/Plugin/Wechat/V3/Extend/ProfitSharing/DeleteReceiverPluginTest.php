@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Extend\ProfitSharing;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Extend\ProfitSharing\DeleteReceiverPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Extend\ProfitSharing\DeleteReceiverPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -34,8 +36,8 @@ class DeleteReceiverPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -52,8 +54,8 @@ class DeleteReceiverPluginTest extends TestCase
     public function testServiceParams()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'test' => 'yansongda',
             'sub_mchid' => '2222',
         ]));
 
@@ -72,8 +74,8 @@ class DeleteReceiverPluginTest extends TestCase
     public function testService()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

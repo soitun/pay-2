@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Fapiao;
 
 use Yansongda\Artful\Rocket;
@@ -21,8 +23,8 @@ class QueryConfigPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
             'appid' => '1111',
             '_t' => 'a',
         ]));

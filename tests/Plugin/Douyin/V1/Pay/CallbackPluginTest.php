@@ -29,7 +29,7 @@ class CallbackPluginTest extends TestCase
         $rocket = new Rocket();
         $rocket->setParams(json_decode($post, true));
 
-        $result = $this->plugin->assembly($rocket, function ($rocket) {return $rocket;});
+        $result = $this->plugin->assembly($rocket, function ($rocket) {return $rocket; });
 
         self::assertNotEmpty($result->getPayload()->all());
         self::assertNotEmpty($result->getDestination()->all());
@@ -45,7 +45,7 @@ class CallbackPluginTest extends TestCase
         self::expectException(InvalidSignException::class);
         self::expectExceptionCode(Exception::SIGN_EMPTY);
 
-        $this->plugin->assembly($rocket, function ($rocket) {return $rocket;});
+        $this->plugin->assembly($rocket, function ($rocket) {return $rocket; });
     }
 
     public function testVerifyDouyinSignError()
@@ -58,7 +58,7 @@ class CallbackPluginTest extends TestCase
         self::expectException(InvalidSignException::class);
         self::expectExceptionCode(Exception::SIGN_ERROR);
 
-        $this->plugin->assembly($rocket, function ($rocket) {return $rocket;});
+        $this->plugin->assembly($rocket, function ($rocket) {return $rocket; });
     }
 
     public function testVerifyDouyinSignConfigError()
@@ -74,6 +74,6 @@ class CallbackPluginTest extends TestCase
         self::expectException(InvalidConfigException::class);
         self::expectExceptionCode(Exception::CONFIG_DOUYIN_INVALID);
 
-        $this->plugin->assembly($rocket, function ($rocket) {return $rocket;});
+        $this->plugin->assembly($rocket, function ($rocket) {return $rocket; });
     }
 }

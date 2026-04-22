@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Fapiao\Blockchain;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,8 +36,8 @@ class DownloadPluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "download_url" => "https://pay.yansongda.cn?token=123",
+        $rocket->setPayload(new Collection([
+            'download_url' => 'https://pay.yansongda.cn?token=123',
             'appid' => '1111',
             '_t' => 'a',
         ]));

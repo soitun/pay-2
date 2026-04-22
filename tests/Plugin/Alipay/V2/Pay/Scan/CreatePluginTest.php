@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Alipay\V2\Pay\Scan;
 
 use Yansongda\Artful\Direction\ResponseDirection;
-use Yansongda\Pay\Plugin\Alipay\V2\Pay\Scan\CreatePlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Alipay\V2\Pay\Scan\CreatePlugin;
 use Yansongda\Pay\Tests\TestCase;
 
 class CreatePluginTest extends TestCase

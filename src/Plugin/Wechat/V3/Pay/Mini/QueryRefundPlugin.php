@@ -40,7 +40,7 @@ class QueryRefundPlugin implements PluginInterface
             throw new InvalidParamsException(Exception::PARAMS_NECESSARY_PARAMS_MISSING, '参数异常: Mini 查询退款订单，参数缺少 `out_refund_no`');
         }
 
-        $subMchId = $payload->get('sub_mchid', $config['sub_mch_id'] ?? '');
+        $subMchId = $payload->get('sub_mchid', $config->getSubMchId() ?? '');
 
         $rocket->setPayload([
             '_method' => 'GET',

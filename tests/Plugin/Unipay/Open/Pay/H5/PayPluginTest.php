@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Unipay\Open\Pay\H5;
 
 use Yansongda\Artful\Direction\ResponseDirection;
-use Yansongda\Pay\Plugin\Unipay\Open\Pay\H5\PayPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Unipay\Open\Pay\H5\PayPlugin;
 use Yansongda\Pay\Tests\TestCase;
 
 class PayPluginTest extends TestCase

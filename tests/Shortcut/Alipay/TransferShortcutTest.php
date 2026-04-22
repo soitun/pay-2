@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Shortcut\Alipay;
 
 use Yansongda\Artful\Plugin\ParserPlugin;

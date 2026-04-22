@@ -12,6 +12,7 @@ use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Packer\XmlPacker;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Traits\WechatTrait;
 use Yansongda\Supports\Str;
 
@@ -32,14 +33,16 @@ class CancelPlugin implements PluginInterface
         Logger::debug('[Wechat][V2][Pay][Pos][CancelPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
 
         $rocket->setPacker(XmlPacker::class)
             ->mergePayload([
                 '_url' => 'secapi/pay/reverse',
                 '_content_type' => 'application/xml',
-                'appid' => $config[self::getWechatTypeKey($params)] ?? '',
-                'mch_id' => $config['mch_id'] ?? '',
+                'appid' => $config->getAppIdByType($params['_type'] ?? 'mp') ?? '',
+                'mch_id' => $config->getMchId(),
                 'nonce_str' => Str::random(32),
                 'sign_type' => 'MD5',
             ]);

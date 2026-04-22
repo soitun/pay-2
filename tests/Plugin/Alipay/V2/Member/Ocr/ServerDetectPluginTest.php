@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Alipay\V2\Member\Ocr;
 
 use Yansongda\Artful\Direction\ResponseDirection;
-use Yansongda\Pay\Plugin\Alipay\V2\Member\Ocr\ServerDetectPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Alipay\V2\Member\Ocr\ServerDetectPlugin;
 use Yansongda\Pay\Tests\TestCase;
 
 class ServerDetectPluginTest extends TestCase

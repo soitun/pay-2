@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Coupon\Callback;
 
 use Yansongda\Artful\Rocket;
@@ -21,8 +23,8 @@ class SetPluginTest extends TestCase
     public function testNormalParams()
     {
         $payload = [
-            "mchid" => "yansongda",
-            "notify_url" => "https://www.yansongda.cn",
+            'mchid' => 'yansongda',
+            'notify_url' => 'https://www.yansongda.cn',
             'test' => 'aaa',
         ];
 

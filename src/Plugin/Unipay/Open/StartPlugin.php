@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Yansongda\Pay\Plugin\Unipay\Open;
 
 use Closure;
-use Yansongda\Artful\Contract\ConfigInterface;
 use Yansongda\Artful\Contract\PluginInterface;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\UnipayConfig;
 use Yansongda\Pay\Exception\Exception;
-use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\UnipayTrait;
 
 class StartPlugin implements PluginInterface
@@ -30,12 +29,13 @@ class StartPlugin implements PluginInterface
         Logger::debug('[Unipay][StartPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $params = $rocket->getParams();
+
+        /** @var UnipayConfig $config */
         $config = self::getProviderConfig('unipay', $params);
-        $tenant = self::getTenant($params);
 
         $rocket->mergePayload(array_merge($params, [
             '_unpack_raw' => true,
-            'certId' => $this->getCertId($tenant, $config),
+            'certId' => $this->getCertId($config),
         ]));
 
         Logger::info('[Unipay][StartPlugin] 插件装载完毕', ['rocket' => $rocket]);
@@ -48,10 +48,12 @@ class StartPlugin implements PluginInterface
      * @throws InvalidConfigException
      * @throws ServiceNotFoundException
      */
-    public function getCertId(string $tenant, array $config): string
+    public function getCertId(UnipayConfig $config): string
     {
-        if (!empty($config['certs']['cert_id'])) {
-            return $config['certs']['cert_id'];
+        $certs = $config->getCerts();
+
+        if (!empty($certs['cert_id'])) {
+            return $certs['cert_id'];
         }
 
         $certs = $this->getCerts($config);
@@ -63,7 +65,7 @@ class StartPlugin implements PluginInterface
 
         $certs['cert_id'] = $ssl['serialNumber'] ?? '';
 
-        Pay::get(ConfigInterface::class)->set('unipay.'.$tenant.'.certs', $certs);
+        $config->setCerts($certs);
 
         return $certs['cert_id'];
     }
@@ -73,17 +75,17 @@ class StartPlugin implements PluginInterface
      *
      * @throws InvalidConfigException
      */
-    protected function getCerts(array $config): array
+    protected function getCerts(UnipayConfig $config): array
     {
-        $path = $config['mch_cert_path'] ?? null;
-        $password = $config['mch_cert_password'] ?? null;
+        $path = $config->getMchCertPath();
+        $password = $config->getMchCertPassword();
 
-        if (is_null($path) || is_null($password)) {
+        if (empty($path) || empty($password)) {
             throw new InvalidConfigException(Exception::CONFIG_UNIPAY_INVALID, '配置异常: 缺少银联配置 -- [mch_cert_path] or [mch_cert_password]');
         }
 
         if (false === openssl_pkcs12_read(file_get_contents($path), $certs, $password)) {
-            throw new InvalidConfigException(Exception::CONFIG_UNIPAY_INVALID, '配置异常: 读取银联 `mch_cert_path` 失败，请确认参数是否正确');
+            throw new InvalidConfigException(Exception::CONFIG_UNIPAY_INVALID, '配置异常: 读取银联 `mch_cert_path` 失败，确认参数是否正确');
         }
 
         return $certs;

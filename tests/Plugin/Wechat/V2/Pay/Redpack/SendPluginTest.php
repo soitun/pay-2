@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V2\Pay\Redpack;
 
 use Yansongda\Artful\Packer\XmlPacker;
@@ -22,8 +24,8 @@ class SendPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "mch_billno" => "111",
+        $rocket->setPayload(new Collection([
+            'mch_billno' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

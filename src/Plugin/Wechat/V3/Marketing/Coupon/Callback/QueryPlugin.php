@@ -30,7 +30,7 @@ class QueryPlugin implements PluginInterface
 
         $params = $rocket->getParams();
         $config = self::getProviderConfig('wechat', $params);
-        $mchId = $rocket->getPayload()?->get('mchid') ?? $config['mch_id'] ?? 'null';
+        $mchId = $rocket->getPayload()?->get('mchid') ?? $config->getMchId();
 
         $rocket->setPayload([
             '_method' => 'GET',

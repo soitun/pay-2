@@ -10,14 +10,14 @@ use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
-use Yansongda\Pay\Traits\SupportServiceProviderTrait;
+use Yansongda\Pay\Traits\AlipayTrait;
 
 /**
  * @see https://opendocs.alipay.com/open/02np92?pathHash=de4742e0&ref=api
  */
 class ScanPayPlugin implements PluginInterface
 {
-    use SupportServiceProviderTrait;
+    use AlipayTrait;
 
     /**
      * @throws ContainerException

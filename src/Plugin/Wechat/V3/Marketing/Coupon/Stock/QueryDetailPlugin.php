@@ -35,7 +35,7 @@ class QueryDetailPlugin implements PluginInterface
         $config = self::getProviderConfig('wechat', $params);
         $payload = $rocket->getPayload();
         $stockId = $payload?->get('stock_id') ?? null;
-        $mchId = $payload?->get('stock_creator_mchid') ?? $config['mch_id'] ?? 'null';
+        $mchId = $payload?->get('stock_creator_mchid') ?? $config->getMchId();
 
         if (empty($stockId)) {
             throw new InvalidParamsException(Exception::PARAMS_NECESSARY_PARAMS_MISSING, '参数异常: 查询代金券批次详情，参数缺少 `stock_id`');

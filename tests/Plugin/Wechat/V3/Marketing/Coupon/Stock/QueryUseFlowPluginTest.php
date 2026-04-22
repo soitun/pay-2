@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Marketing\Coupon\Stock;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,8 +36,8 @@ class QueryUseFlowPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "stock_id" => "111",
+        $rocket->setPayload(new Collection([
+            'stock_id' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });

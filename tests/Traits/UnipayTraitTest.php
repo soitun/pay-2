@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Yansongda\Pay\Tests\Traits;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use Mockery;
 use Yansongda\Artful\Artful;
 use Yansongda\Artful\Contract\ConfigInterface;
-use Yansongda\Artful\Contract\HttpClientInterface;
 use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Pay\Config\UnipayConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Exception\InvalidSignException;
 use Yansongda\Pay\Pay;
@@ -64,7 +61,7 @@ Q0C300Eo+XOoO4M1WvsRBAF13g9RPSw=\r
         self::expectExceptionCode(Exception::CONFIG_UNIPAY_INVALID);
         self::expectExceptionMessage('配置异常： 缺少银联配置 -- [unipay_public_cert_path]');
         Artful::get(ConfigInterface::class)->set('unipay.default.unipay_public_cert_path', null);
-        UnipayTraitStub::verifyUnipaySign([], $contents, $sign);
+        UnipayTraitStub::verifyUnipaySign(new UnipayConfig(['mch_secret_key' => 'foo']), $contents, $sign);
     }
 
     public function testVerifyUnipaySignEmpty(): void
@@ -72,19 +69,21 @@ Q0C300Eo+XOoO4M1WvsRBAF13g9RPSw=\r
         self::expectException(InvalidSignException::class);
         self::expectExceptionCode(Exception::SIGN_EMPTY);
         self::expectExceptionMessage('签名异常: 银联签名为空');
-        UnipayTraitStub::verifyUnipaySign([], '', '');
+        UnipayTraitStub::verifyUnipaySign(new UnipayConfig(['mch_secret_key' => 'foo']), '', '');
     }
 
     public function testGetUnipayUrl(): void
     {
-        self::assertEquals('https://yansongda.cn', UnipayTraitStub::getUnipayUrl([], new Collection(['_url' => 'https://yansongda.cn'])));
-        self::assertEquals('https://gateway.95516.com/api/v1/yansongda', UnipayTraitStub::getUnipayUrl([], new Collection(['_url' => 'api/v1/yansongda'])));
-        self::assertEquals('https://gateway.95516.com/api/v1/service/yansongda', UnipayTraitStub::getUnipayUrl(['mode' => Pay::MODE_SERVICE], new Collection(['_service_url' => 'api/v1/service/yansongda'])));
-        self::assertEquals('https://gateway.95516.com/api/v1/service/yansongda', UnipayTraitStub::getUnipayUrl(['mode' => Pay::MODE_SERVICE], new Collection(['_url' => 'foo', '_service_url' => 'api/v1/service/yansongda'])));
+        $config = new UnipayConfig(['mch_secret_key' => 'foo']);
+
+        self::assertEquals('https://yansongda.cn', UnipayTraitStub::getUnipayUrl($config, new Collection(['_url' => 'https://yansongda.cn'])));
+        self::assertEquals('https://gateway.95516.com/api/v1/yansongda', UnipayTraitStub::getUnipayUrl($config, new Collection(['_url' => 'api/v1/yansongda'])));
+        self::assertEquals('https://gateway.95516.com/api/v1/service/yansongda', UnipayTraitStub::getUnipayUrl(new UnipayConfig(['mch_secret_key' => 'foo', 'mode' => Pay::MODE_SERVICE]), new Collection(['_service_url' => 'api/v1/service/yansongda'])));
+        self::assertEquals('https://gateway.95516.com/api/v1/service/yansongda', UnipayTraitStub::getUnipayUrl(new UnipayConfig(['mch_secret_key' => 'foo', 'mode' => Pay::MODE_SERVICE]), new Collection(['_url' => 'foo', '_service_url' => 'api/v1/service/yansongda'])));
 
         self::expectException(InvalidParamsException::class);
         self::expectExceptionCode(Exception::PARAMS_UNIPAY_URL_MISSING);
-        UnipayTraitStub::getUnipayUrl([], new Collection([]));
+        UnipayTraitStub::getUnipayUrl($config, new Collection([]));
     }
 
     public function testGetUnipayBody(): void
@@ -98,6 +97,7 @@ Q0C300Eo+XOoO4M1WvsRBAF13g9RPSw=\r
 
     public function testGetUnipaySignQra(): void
     {
+        /** @var UnipayConfig $config */
         $config = UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']);
 
         $payload = [
@@ -122,79 +122,88 @@ Q0C300Eo+XOoO4M1WvsRBAF13g9RPSw=\r
 
         self::expectException(InvalidConfigException::class);
         self::expectExceptionCode(Exception::CONFIG_UNIPAY_INVALID);
-        UnipayTraitStub::getUnipaySignQra([], $payload);
+        UnipayTraitStub::getUnipaySignQra(new UnipayConfig(['mch_cert_path' => 'foo', 'mch_cert_password' => 'bar']), $payload);
     }
 
     public function testVerifyUnipaySignQra(): void
     {
         $payload = [
-            "charset" => "UTF-8",
-            "code" => "9999999",
-            "err_code" => "NOAUTH",
-            "err_msg" => "此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。",
-            "mch_id" => "QRA29045311KKR1",
-            "need_query" => "N",
-            "nonce_str" => "UhxOr4kzerPGku9wCaVQyfd1zisoAnAm",
-            "result_code" => "1",
-            "sign" => "4B9B2AA73A05CBC32CFDCB4456E12EBA",
-            "sign_type" => "MD5",
-            "status" => "0",
-            "transaction_id" => "95516000379952690603566602920171",
-            "version" => "2.0",
+            'charset' => 'UTF-8',
+            'code' => '9999999',
+            'err_code' => 'NOAUTH',
+            'err_msg' => '此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。',
+            'mch_id' => 'QRA29045311KKR1',
+            'need_query' => 'N',
+            'nonce_str' => 'UhxOr4kzerPGku9wCaVQyfd1zisoAnAm',
+            'result_code' => '1',
+            'sign' => '4B9B2AA73A05CBC32CFDCB4456E12EBA',
+            'sign_type' => 'MD5',
+            'status' => '0',
+            'transaction_id' => '95516000379952690603566602920171',
+            'version' => '2.0',
         ];
 
-        UnipayTraitStub::verifyUnipaySignQra(UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']), $payload);
+        /** @var UnipayConfig $config */
+        $config = UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']);
+
+        UnipayTraitStub::verifyUnipaySignQra($config, $payload);
         self::assertTrue(true);
 
         self::expectException(InvalidConfigException::class);
         self::expectExceptionCode(Exception::CONFIG_UNIPAY_INVALID);
-        UnipayTraitStub::getUnipaySignQra([], $payload);
+        UnipayTraitStub::verifyUnipaySignQra(new UnipayConfig(['mch_cert_path' => 'foo', 'mch_cert_password' => 'bar']), $payload);
     }
 
     public function testVerifyUnipaySignQraWrong(): void
     {
         $payload = [
-            "charset" => "UTF-8",
-            "code" => "9999999",
-            "err_code" => "NOAUTH",
-            "err_msg" => "此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。",
-            "mch_id" => "QRA29045311KKR1",
-            "need_query" => "N",
-            "nonce_str" => "UhxOr4kzerPGku9wCaVQyfd1zisoAnAm",
-            "result_code" => "1",
-            "sign" => "4B9B2AA73A05CBC32CFDCB4456E12EB1",
-            "sign_type" => "MD5",
-            "status" => "0",
-            "transaction_id" => "95516000379952690603566602920171",
-            "version" => "2.0",
+            'charset' => 'UTF-8',
+            'code' => '9999999',
+            'err_code' => 'NOAUTH',
+            'err_msg' => '此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。',
+            'mch_id' => 'QRA29045311KKR1',
+            'need_query' => 'N',
+            'nonce_str' => 'UhxOr4kzerPGku9wCaVQyfd1zisoAnAm',
+            'result_code' => '1',
+            'sign' => '4B9B2AA73A05CBC32CFDCB4456E12EB1',
+            'sign_type' => 'MD5',
+            'status' => '0',
+            'transaction_id' => '95516000379952690603566602920171',
+            'version' => '2.0',
         ];
 
         self::expectException(InvalidSignException::class);
         self::expectExceptionCode(Exception::SIGN_ERROR);
 
-        UnipayTraitStub::verifyUnipaySignQra(UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']), $payload);
+        /** @var UnipayConfig $config */
+        $config = UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']);
+
+        UnipayTraitStub::verifyUnipaySignQra($config, $payload);
     }
 
     public function testVerifyUnipaySignQraEmpty(): void
     {
         $payload = [
-            "charset" => "UTF-8",
-            "code" => "9999999",
-            "err_code" => "NOAUTH",
-            "err_msg" => "此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。",
-            "mch_id" => "QRA29045311KKR1",
-            "need_query" => "N",
-            "nonce_str" => "UhxOr4kzerPGku9wCaVQyfd1zisoAnAm",
-            "result_code" => "1",
-            "sign_type" => "MD5",
-            "status" => "0",
-            "transaction_id" => "95516000379952690603566602920171",
-            "version" => "2.0",
+            'charset' => 'UTF-8',
+            'code' => '9999999',
+            'err_code' => 'NOAUTH',
+            'err_msg' => '此商家涉嫌违规，收款功能已被限制，暂无法支付。商家可以登录微信商户平台/微信支付商家助手小程序查看原因和解决方案。',
+            'mch_id' => 'QRA29045311KKR1',
+            'need_query' => 'N',
+            'nonce_str' => 'UhxOr4kzerPGku9wCaVQyfd1zisoAnAm',
+            'result_code' => '1',
+            'sign_type' => 'MD5',
+            'status' => '0',
+            'transaction_id' => '95516000379952690603566602920171',
+            'version' => '2.0',
         ];
 
         self::expectException(InvalidSignException::class);
         self::expectExceptionCode(Exception::SIGN_EMPTY);
 
-        UnipayTraitStub::verifyUnipaySignQra(UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']), $payload);
+        /** @var UnipayConfig $config */
+        $config = UnipayTraitStub::getProviderConfig('unipay', ['_config' => 'qra']);
+
+        UnipayTraitStub::verifyUnipaySignQra($config, $payload);
     }
 }

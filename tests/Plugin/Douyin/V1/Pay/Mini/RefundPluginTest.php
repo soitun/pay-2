@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Plugin\Douyin\V1\Pay\Mini;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
@@ -34,7 +36,7 @@ class RefundPluginTest extends TestCase
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
+        $rocket->setPayload(new Collection([
             'out_order_no' => '202408040747147327',
             'out_refund_no' => '202408040747147327',
             'reason' => '测试',

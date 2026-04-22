@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Unipay;
 
-use Yansongda\Pay\Plugin\Unipay\AddRadarPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Unipay\AddRadarPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 

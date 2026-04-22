@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Yansongda\Pay\Plugin\Wechat\V3\CallbackPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Wechat\V3\CallbackPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -47,6 +49,6 @@ class CallbackPluginTest extends TestCase
 
         self::assertInstanceOf(Collection::class, $result->getDestination());
         self::assertNotEmpty($result->getDestination()->get('resource.ciphertext'));
-        self::assertStringContainsString("AEAD_AES_256_GCM", (string) $result->getDestinationOrigin()->getBody());
+        self::assertStringContainsString('AEAD_AES_256_GCM', (string) $result->getDestinationOrigin()->getBody());
     }
 }

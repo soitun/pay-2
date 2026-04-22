@@ -6,16 +6,15 @@ namespace Yansongda\Pay\Traits;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Yansongda\Artful\Artful;
-use Yansongda\Artful\Contract\ConfigInterface;
 use Yansongda\Artful\Exception\ContainerException;
 use Yansongda\Artful\Exception\InvalidConfigException;
 use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Plugin\ParserPlugin;
 use Yansongda\Artful\Plugin\StartPlugin;
+use Yansongda\Pay\Config\PaypalConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Exception\InvalidSignException;
-use Yansongda\Pay\Pay;
 use Yansongda\Pay\Plugin\Paypal\V2\AddRadarPlugin;
 use Yansongda\Pay\Plugin\Paypal\V2\GetAccessTokenPlugin;
 use Yansongda\Pay\Plugin\Paypal\V2\ResponsePlugin;
@@ -27,7 +26,7 @@ trait PaypalTrait
 {
     use ProviderConfigTrait;
 
-    public static function getPaypalUrl(array $config, ?Collection $payload): string
+    public static function getPaypalUrl(PaypalConfig $config, ?Collection $payload): string
     {
         $url = self::getRadarUrl($config, $payload);
 
@@ -39,7 +38,7 @@ trait PaypalTrait
             return $url;
         }
 
-        return Paypal::URL[$config['mode'] ?? Pay::MODE_NORMAL].$url;
+        return Paypal::URL[$config->getMode()].$url;
     }
 
     /**
@@ -50,15 +49,16 @@ trait PaypalTrait
      */
     public static function getPaypalAccessToken(array $params): string
     {
+        /** @var PaypalConfig $config */
         $config = self::getProviderConfig('paypal', $params);
 
-        if (!empty($config['_access_token'])
-            && !empty($config['_access_token_expiry'])
-            && time() < (int) $config['_access_token_expiry']) {
-            return $config['_access_token'];
+        if (!empty($config->getAccessToken())
+            && !empty($config->getAccessTokenExpiry())
+            && time() < $config->getAccessTokenExpiry()) {
+            return $config->getAccessToken();
         }
 
-        if (empty($config['client_id']) || empty($config['app_secret'])) {
+        if (empty($config->getClientId()) || empty($config->getAppSecret())) {
             throw new InvalidConfigException(Exception::CONFIG_PAYPAL_INVALID, '配置异常: 缺少 PayPal 配置 -- [client_id] or [app_secret]');
         }
 
@@ -73,14 +73,8 @@ trait PaypalTrait
         $token = $result->get('access_token', '');
         $expiresIn = $result->get('expires_in', 32400);
 
-        Pay::get(ConfigInterface::class)->set(
-            'paypal.'.self::getTenant($params).'._access_token',
-            $token
-        );
-        Pay::get(ConfigInterface::class)->set(
-            'paypal.'.self::getTenant($params).'._access_token_expiry',
-            time() + $expiresIn - 60
-        );
+        $config->setAccessToken($token);
+        $config->setAccessTokenExpiry(time() + $expiresIn - 60);
 
         return $token;
     }
@@ -94,9 +88,10 @@ trait PaypalTrait
      */
     public static function verifyPaypalWebhookSign(ServerRequestInterface $request, array $params): void
     {
+        /** @var PaypalConfig $config */
         $config = self::getProviderConfig('paypal', $params);
 
-        $webhookId = $config['webhook_id'] ?? null;
+        $webhookId = $config->getWebhookId();
 
         if (empty($webhookId)) {
             throw new InvalidConfigException(Exception::CONFIG_PAYPAL_INVALID, '配置异常: 缺少 PayPal 配置 -- [webhook_id]');
@@ -126,7 +121,7 @@ trait PaypalTrait
         ];
 
         $token = self::getPaypalAccessToken($params);
-        $url = Paypal::URL[$config['mode'] ?? Pay::MODE_NORMAL].'v1/notifications/verify-webhook-signature';
+        $url = Paypal::URL[$config->getMode()].'v1/notifications/verify-webhook-signature';
 
         $result = Artful::artful([
             StartPlugin::class,

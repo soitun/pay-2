@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Extend\ProfitSharing;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Mockery;
 use Yansongda\Artful\Contract\HttpClientInterface;
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Plugin\Wechat\V3\Extend\ProfitSharing\AddReceiverPlugin;
-use Yansongda\Artful\Rocket;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -39,8 +41,8 @@ class AddReceiverPluginTest extends TestCase
     public function testNormalWithoutName()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -58,7 +60,7 @@ class AddReceiverPluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setPayload(new Collection([
-            "name" => "yansongda",
+            'name' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) {
@@ -79,7 +81,7 @@ class AddReceiverPluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
-            "test" => "yansongda",
+            'test' => 'yansongda',
             'sub_mchid' => '2222',
         ]));
 
@@ -98,8 +100,8 @@ class AddReceiverPluginTest extends TestCase
     public function testServiceWithoutName()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'test' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -118,7 +120,7 @@ class AddReceiverPluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
-            "name" => "yansongda",
+            'name' => 'yansongda',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) {
@@ -138,8 +140,8 @@ class AddReceiverPluginTest extends TestCase
     public function testWithSubAppId()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "test" => "yansongda",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'test' => 'yansongda',
             'type' => 'PERSONAL_SUB_OPENID',
         ]));
 
@@ -161,7 +163,7 @@ class AddReceiverPluginTest extends TestCase
     {
         $rocket = new Rocket();
         $rocket->setParams(['_config' => 'empty_wechat_public_cert'])->setPayload(new Collection([
-            "name" => "yansongda",
+            'name' => 'yansongda',
         ]));
 
         $response = new Response(
@@ -179,8 +181,8 @@ class AddReceiverPluginTest extends TestCase
                         ],
                         'expire_time' => '2026-07-15T17:51:10+08:00',
                         'serial_no' => 'test-45F59D4DABF31918AFCEC556D5D2C6E376675D57',
-                    ]
-                ]
+                    ],
+                ],
             ])
         );
 

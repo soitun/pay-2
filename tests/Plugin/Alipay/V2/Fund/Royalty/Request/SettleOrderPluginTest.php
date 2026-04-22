@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Alipay\V2\Fund\Royalty\Request;
 
 use Yansongda\Artful\Direction\ResponseDirection;

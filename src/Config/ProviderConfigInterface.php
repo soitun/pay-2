@@ -10,5 +10,5 @@ interface ProviderConfigInterface
 
     public function getMode(): int;
 
-    public function toArray(): array;
+    public function get(?string $key = null, mixed $default = null): mixed;
 }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Unipay\Qra;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Unipay\Qra\AddPayloadSignaturePlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Unipay\Qra\AddPayloadSignaturePlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -45,7 +47,6 @@ class AddPayloadSignaturePluginTest extends TestCase
         $rocket = (new Rocket())->setParams(['_config' => 'qra'])->setPayload($payload);
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
         $payload = $result->getPayload();
-
 
         self::assertEquals('DB571C2F75C657B42485CD07470F0FB9', $payload->get('sign'));
     }

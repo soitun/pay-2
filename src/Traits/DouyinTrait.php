@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yansongda\Pay\Traits;
 
 use Yansongda\Artful\Exception\InvalidParamsException;
+use Yansongda\Pay\Config\DouyinConfig;
 use Yansongda\Pay\Exception\Exception;
-use Yansongda\Pay\Pay;
 use Yansongda\Pay\Provider\Douyin;
 use Yansongda\Supports\Collection;
 
@@ -17,7 +17,7 @@ trait DouyinTrait
     /**
      * @throws InvalidParamsException
      */
-    public static function getDouyinUrl(array $config, ?Collection $payload): string
+    public static function getDouyinUrl(DouyinConfig $config, ?Collection $payload): string
     {
         $url = self::getRadarUrl($config, $payload);
 
@@ -29,6 +29,6 @@ trait DouyinTrait
             return $url;
         }
 
-        return Douyin::URL[$config['mode'] ?? Pay::MODE_NORMAL].$url;
+        return Douyin::URL[$config->getMode()].$url;
     }
 }

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Pay\Jsapi;
 
-use Yansongda\Pay\Exception\Exception;
 use Yansongda\Artful\Exception\InvalidParamsException;
-use Yansongda\Pay\Plugin\Wechat\V3\Pay\Jsapi\RefundPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Exception\Exception;
+use Yansongda\Pay\Plugin\Wechat\V3\Pay\Jsapi\RefundPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -34,8 +36,8 @@ class RefundPluginTest extends TestCase
     public function testNormalParams()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "notify_url" => "111",
+        $rocket->setPayload(new Collection([
+            'notify_url' => '111',
             'name' => '222',
         ]));
 
@@ -49,12 +51,12 @@ class RefundPluginTest extends TestCase
             'name' => '222',
         ], $result->getPayload()->all());
     }
-    
+
     public function testNormal()
     {
         $rocket = new Rocket();
-        $rocket->setPayload(new Collection( [
-            "out_trade_no" => "111",
+        $rocket->setPayload(new Collection([
+            'out_trade_no' => '111',
         ]));
 
         $result = $this->plugin->assembly($rocket, function ($rocket) { return $rocket; });
@@ -71,8 +73,8 @@ class RefundPluginTest extends TestCase
     public function testServiceParams()
     {
         $rocket = new Rocket();
-        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection( [
-            "notify_url" => "111",
+        $rocket->setParams(['_config' => 'service_provider'])->setPayload(new Collection([
+            'notify_url' => '111',
             'sub_mchid' => '222',
             'name' => 'yansongda',
         ]));
@@ -103,7 +105,7 @@ class RefundPluginTest extends TestCase
             '_url' => 'v3/refund/domestic/refunds',
             '_service_url' => 'v3/refund/domestic/refunds',
             'name' => 'yansongda',
-            'notify_url' => null,
+            'notify_url' => 'https://pay.yansongda.cn',
             'sub_mchid' => '1600314070',
         ], $result->getPayload()->all());
     }

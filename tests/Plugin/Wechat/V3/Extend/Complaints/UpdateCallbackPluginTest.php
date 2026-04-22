@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yansongda\Pay\Tests\Plugin\Wechat\V3\Extend\Complaints;
 
-use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\UpdateCallbackPlugin;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Plugin\Wechat\V3\Extend\Complaints\UpdateCallbackPlugin;
 use Yansongda\Pay\Tests\TestCase;
 use Yansongda\Supports\Collection;
 
@@ -21,7 +23,7 @@ class UpdateCallbackPluginTest extends TestCase
     public function testNormal()
     {
         $payload = [
-            "url" => "yansongda",
+            'url' => 'yansongda',
         ];
 
         $rocket = new Rocket();
