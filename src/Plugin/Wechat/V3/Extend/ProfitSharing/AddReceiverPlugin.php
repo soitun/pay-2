@@ -39,6 +39,8 @@ class AddReceiverPlugin implements PluginInterface
         Logger::debug('[Wechat][Extend][ProfitSharing][AddReceiverPlugin] 插件开始装载', ['rocket' => $rocket]);
 
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $payload = $rocket->getPayload();
 
@@ -120,7 +122,6 @@ class AddReceiverPlugin implements PluginInterface
     {
         $data['_serial_no'] = self::getWechatSerialNo($params);
 
-        $config = self::getProviderConfig('wechat', $params);
         $publicKey = self::getWechatPublicKey($config, $data['_serial_no']);
 
         $data['name'] = self::encryptWechatContents($payload->get('name'), $publicKey);

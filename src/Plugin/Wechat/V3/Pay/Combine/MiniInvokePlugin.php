@@ -53,6 +53,8 @@ class MiniInvokePlugin implements PluginInterface
         }
 
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $payload = $rocket->getPayload();
 

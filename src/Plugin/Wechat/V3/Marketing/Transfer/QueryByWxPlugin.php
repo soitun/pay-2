@@ -11,6 +11,7 @@ use Yansongda\Artful\Exception\InvalidParamsException;
 use Yansongda\Artful\Exception\ServiceNotFoundException;
 use Yansongda\Artful\Logger;
 use Yansongda\Artful\Rocket;
+use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Exception\Exception;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Traits\WechatTrait;
@@ -31,6 +32,7 @@ class QueryByWxPlugin implements PluginInterface
     {
         Logger::debug('[Wechat][Marketing][Transfer][QueryByWxPlugin] 插件开始装载', ['rocket' => $rocket]);
 
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $rocket->getParams());
         $payload = $rocket->getPayload();
         $transferBillNo = $payload?->get('transfer_bill_no') ?? null;

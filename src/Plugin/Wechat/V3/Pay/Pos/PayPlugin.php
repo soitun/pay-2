@@ -37,6 +37,8 @@ class PayPlugin implements PluginInterface
 
         $payload = $rocket->getPayload();
         $params = $rocket->getParams();
+
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
 
         if (is_null($payload)) {

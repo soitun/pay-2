@@ -93,6 +93,7 @@ class CreatePlugin implements PluginInterface
     {
         $data['_serial_no'] = self::getWechatSerialNo($params);
 
+        /** @var WechatConfig $config */
         $config = self::getProviderConfig('wechat', $params);
         $publicKey = self::getWechatPublicKey($config, $data['_serial_no']);
 
