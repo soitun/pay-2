@@ -17,7 +17,6 @@ class UnipayConfig extends AbstractConfig
     private ?string $notifyUrl = null;
     private ?string $mchId = null;
     private ?string $returnUrl = null;
-    private array $certs = [];
     private int $mode = Pay::MODE_NORMAL;
 
     public function setMchCertPath(string $value): void
@@ -53,11 +52,6 @@ class UnipayConfig extends AbstractConfig
     public function setReturnUrl(?string $value): void
     {
         $this->returnUrl = $value;
-    }
-
-    public function setCerts(array $value): void
-    {
-        $this->certs = $value;
     }
 
     public function setMode(int $value): void
@@ -100,16 +94,14 @@ class UnipayConfig extends AbstractConfig
         return $this->returnUrl;
     }
 
-    public function getCerts(): array
-    {
-        return $this->certs;
-    }
-
     public function getMode(): int
     {
         return $this->mode;
     }
 
+    /**
+     * @throws InvalidConfigException 缺少必要配置参数
+     */
     protected function validateRequired(): void
     {
         if (!empty($this->mchSecretKey)) {
