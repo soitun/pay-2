@@ -147,6 +147,7 @@ class Pay
     public static function clear(): void
     {
         Artful::clear();
+        CertManager::clearCache();
     }
 
     private static function isAlreadyConfigured(): bool

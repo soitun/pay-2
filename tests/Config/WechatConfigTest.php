@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yansongda\Pay\Tests\Config;
 
 use Yansongda\Artful\Exception\InvalidConfigException;
+use Yansongda\Pay\CertManager;
 use Yansongda\Pay\Config\WechatConfig;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Tests\TestCase;
@@ -215,28 +216,23 @@ class WechatConfigTest extends TestCase
         $config->validateForMini();
     }
 
-    public function testPublicKeyBySerial(): void
+    public function testWechatConfigInitImportsToCertManager(): void
     {
-        $config = new WechatConfig(array_merge($this->validConfig, [
+        CertManager::clearCache();
+
+        $tenant = 'test-import';
+        $config = new WechatConfig([
+            'mch_id' => 'test-mch',
+            'mch_secret_key' => str_repeat('a', 32),
+            'mch_secret_cert' => 'test-cert',
+            'mch_public_cert_path' => 'test-path',
             'wechat_public_cert_path' => [
-                'ABC123' => '/path/to/cert.pem',
+                'SERIAL1' => 'cert-content-1',
+                'SERIAL2' => 'cert-content-2',
             ],
-        ]));
+        ], $tenant);
 
-        self::assertSame('/path/to/cert.pem', $config->getPublicKeyBySerial('ABC123'));
-        self::assertNull($config->getPublicKeyBySerial('UNKNOWN'));
-    }
-
-    public function testAllPublicCerts(): void
-    {
-        $config = new WechatConfig(array_merge($this->validConfig, [
-            'wechat_public_cert_path' => [
-                'ABC123' => '/path/to/cert.pem',
-            ],
-        ]));
-
-        $certs = $config->getAllPublicCerts();
-        self::assertArrayHasKey('ABC123', $certs);
-        self::assertSame('/path/to/cert.pem', $certs['ABC123']);
+        self::assertEquals('cert-content-1', CertManager::wechatGetCertBySerial($tenant, 'SERIAL1'));
+        self::assertEquals('cert-content-2', CertManager::wechatGetCertBySerial($tenant, 'SERIAL2'));
     }
 }
